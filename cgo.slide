@@ -1,0 +1,129 @@
+Mixing C and Go
+C for Non-C Programmers
+18:00 1 Oct 2013
+Tags: GoBoston Meetup
+
+James Bardin
+Sr Systems Engineer, Litl LLC
+j.bardin@gmail.com
+
+* Introduction
+
+Sometime you need a little more firepower than Go can provide, either in
+available libraries, or very rarely in performance.
+
+.image cgo/armed_gopher.jpg 242 190
+
+Like a lot of languages, Go can call into native C (and now C++ in go1.2!) libraries.
+Go makes this easy, and brings tools to incorporate C code directly in your project.
+
+* So How Do I Get Started?
+
+	/*
+	C code here
+	*/
+    import "C"
+
+	func main() {
+		C.call_c_code()
+	}
+
+* Really, that's it?
+
+.play cgo/yes.go
+
+* There's a lot you can do in just the preamble
+
+	/*
+	#cgo pkg-config: png                  <- automatic configuration with pkg-config
+	#cgo CFLAGS: -Lsqlite3                <- pass in CFLAGS to the compiler
+	#cgo LDFLAGS: -lz                     <- pass in LDFLAGS to the linker
+	#cgo tcmalloc pkg-config: libtcmalloc <- build constraints on cgo options!
+
+	#include <stdio.h>                    <- includes
+	int say(void) {                       <- regular C code
+		printf("and C code of course");
+		return 0;
+	}
+	*/
+
+* Here's a more complicated snippet:
+(the second line is wrapped)
+
+	#cgo static CFLAGS: -I/usr/local/include/GraphicsMagick
+	#cgo static LDFLAGS: -Wl,-Bstatic -lGraphicsMagick -llcms2 -ltiff -lfreetype -ljasper -ljpeg
+	 -lpng16 -lwmflite -lbz2 -lxml2 -lz -lm -lgomp -Wl,-Bdynamic
+
+- Still no make files required!
+- Build with `go build -tags static`
+
+* Don't be scared if you don't know C!
+
+The combination of the Go compiler and the warnings from your C compiler make
+it much easier to safely incorporate C code.
+
+Things to keep in mind when getting started:
+
+- Know how C deals with strings, pointers, arrays, and macros
+- You will probably need the "unsafe" package
+- Know when to free memory (defer is your friend)
+- Read the library documentation carefully
+- C.*  calls have overhead
+- You can't use valgrind
+
+* OK, let's do something more useful:
+  // Image Manipulation with GraphicsMagick
+
+.code cgo/resize.go /^package/,/^import "C"/
+.code cgo/resize.go /^var/,/^\)/
+
+* Reading an Image from the Filesystem
+
+.code cgo/resize.go /^func Read/,/^}/
+
+- what's that strCopy?
+
+* An Aside About Strings
+
+- C doesn't have strings in the same sense as most other languages.
+- You have a couple representations in C, `*char` and `char[]`, and the latter may or may not be not be null-terminated.
+- In C, arrays degrade into pointers, but in Go they are distinct types.
+
+* Dangerous Pointer Gymnastics
+
+.play cgo/strings.go /START OMIT/,/END OMIT/
+
+* My application-specific solution
+
+.code cgo/resize.go /strCopy OMIT/,/^}/
+
+* Resizing an Image
+
+.code cgo/resize.go /^func Resize/,/^}/
+
+* Saving and Image
+
+.code cgo/resize.go /^func Save/,/^}/
+
+* Now we can tie it all together
+
+.play cgo/resize.go /main OMIT/,/^}/
+
+
+* Links
+
+Cgo Documentation
+
+.link http://golang.org/cmd/cgo/
+
+Cgo Blog Post
+
+.link http://blog.golang.org/c-go-cgo
+
+Cgo Wiki
+
+.link https://code.google.com/p/go-wiki/wiki/cgo
+
+These Slides
+
+.link https://github.com/jbardin/go_talks
