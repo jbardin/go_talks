@@ -21,7 +21,7 @@ func Read(path string) (*C.Image, error) {
 
 	img := C.ReadImage(imageInfo, &exceptionInfo)
 	if img == nil {
-		C.CatchException(&img.exception)
+		C.CatchException(&exceptionInfo)
 		return nil, fmt.Errorf(C.GoString(exceptionInfo.reason))
 	}
 
@@ -31,9 +31,8 @@ func Read(path string) (*C.Image, error) {
 func Resize(img *C.Image, x, y int) (*C.Image, error) {
 	newImg := C.ResizeImage(img, C.ulong(x), C.ulong(y), C.LanczosFilter, 1.0, &exceptionInfo)
 
-	C.CatchException(&exceptionInfo)
 	if newImg == nil {
-		C.CatchException(&img.exception)
+		C.CatchException(&exceptionInfo)
 		return nil, fmt.Errorf(C.GoString(exceptionInfo.reason))
 	}
 
