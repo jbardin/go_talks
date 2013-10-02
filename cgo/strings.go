@@ -9,19 +9,21 @@ import (
 
 /*
 // careful, this might cause a buffer overrun
-char charArray[17] = "this is my string" ;
+char charArray[16] = "sixteen chars xx";
+char a[16]         = "!!BUFFER OVERRUN";
+char* myString = (char*)&charArray;
 #include <string.h>
 */
 import "C"
 
 func main() {
 	// To get the string into GoString, we need a *char
-	// but this one might not be null-terminated
+	// but charArray isn't null terminated, so don't do this!
 	myString := C.GoString((*C.char)(unsafe.Pointer(&C.charArray)))
-	fmt.Println(myString, "and it didn't cause a crash")
+	fmt.Println(myString)
 
 	// Assigning to a char array requires constant sized arrays
-	C.charArray = *(*[17]C.char)(unsafe.Pointer(&[17]byte{'f', 'r', 'o', 'm', ' ', 'g', 'o'}))
+	C.charArray = *(*[16]C.char)(unsafe.Pointer(&[16]byte{'f', 'r', 'o', 'm', ' ', 'g', 'o'}))
 	fmt.Println(C.GoString((*C.char)(unsafe.Pointer(&C.charArray))))
 
 	// Using strncpy still needs more unsafe pointers type assertions
