@@ -12,7 +12,7 @@ j.bardin@gmail.com
 Sometime you need a little more firepower than Go can provide, either in
 available libraries, or very rarely in performance.
 
-.image cgo/armed_gopher.jpg 242 190
+.image code/armed_gopher.jpg 242 190
 
 Like a lot of languages, Go can call into native C (and now C++ in go1.2!) libraries.
 Go makes this easy, and brings tools to incorporate C code directly in your project.
@@ -30,7 +30,7 @@ Go makes this easy, and brings tools to incorporate C code directly in your proj
 
 * Really, that's it?
 
-.play cgo/yes.go
+.play code/yes.go
 
 * There's a lot you can do in just the preamble
 
@@ -74,12 +74,12 @@ Things to keep in mind when getting started:
 * OK, let's do something more useful:
   // Image Manipulation with GraphicsMagick
 
-.code cgo/resize.go /^package/,/^import "C"/
-.code cgo/resize.go /^var/,/^\)/
+.code code/resize.go /^package/,/^import "C"/
+.code code/resize.go /^var/,/^\)/
 
 * Reading an Image from the Filesystem
 
-.code cgo/resize.go /^func Read/,/^}/
+.code code/resize.go /^func Read/,/^}/
 
 - what's that strCopy?
 
@@ -91,23 +91,23 @@ Things to keep in mind when getting started:
 
 * Dangerous Pointer Gymnastics
 
-.play cgo/strings.go /START OMIT/,/END OMIT/
+.play code/strings.go /START OMIT/,/END OMIT/
 
 * My application-specific solution
 
-.code cgo/resize.go /strCopy OMIT/,/^}/
+.code code/resize.go /strCopy OMIT/,/^}/
 
 * Resizing an Image
 
-.code cgo/resize.go /^func Resize/,/^}/
+.code code/resize.go /^func Resize/,/^}/
 
 * Saving and Image
 
-.code cgo/resize.go /^func Save/,/^}/
+.code code/resize.go /^func Save/,/^}/
 
 * Now we can tie it all together
 
-.play cgo/resize.go /main OMIT/,/^}/
+.play code/resize.go /main OMIT/,/^}/
 
 
 * Links
