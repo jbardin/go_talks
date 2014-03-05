@@ -1,0 +1,163 @@
+Go Pointers and References Types
+Inside and Out
+10 Apr 2014
+
+James Bardin
+Sr Systems Engineer, Litl
+j.bardin@gmail.com
+@bardinjw
+
+
+* Pointer Basics
+
+.image pointers.png
+
+* Pointer Basics
+
+A value that "points" to another value. In other words, the pointer contains
+the address of the object to which it points.
+
+.play basics.go /^func main/,/^}/
+
+* Pointer Basics
+
+You don't see (*int)'s declared very often, but you will see 
+struct literals _everywhere_
+
+.code basic_struct.go
+
+* Pointers as function arguments
+
+Pass a pointer when you want to be able to modify a value
+
+.play args.go
+
+
+* Pointers as Method Receivers
+
+Same as function arguments, use a pointer when the "receiver" needs to be modified.
+
+.play receiver.go /START/,/END/
+
+
+* Automatic Dereferencing
+
+While pointers may be confusing at first to beginners, automatic dereferencing prolongs their pain.
+
+
+* Automatic Dereferencing
+
+Go *selectors* automatically dereference (and and sometimes reference) pointers to structs.
+
+.code deref.go
+
+* Seems simple right?
+
+.image hand.png
+
+* Seems simple right?
+
+Well, when _don't_ we use a pointer?
+
+For starters:
+- Interfaces
+- Reference types (slices and maps)
+
+
+* Interfaces
+
+Never, ever user a pointer to an interface 
+(unless you _really_ need one)
+(but you probably don't)
+
+- An interface itself [usually] contains a pointer to the datatype, and a pointer to its metadata.
+
+- If you're accepting an Interface, it because you want the behavior it defines, not because you want to mutate its state.
+
+
+* Inside an Interface
+
+Here's what's inside of your basic Interface:
+
+.image gointer2.png
+
+.link http://research.swtch.com/interfaces research.swtch.com/interfaces
+
+* Gotchas
+
+* A Value in an Interface Isn't Addressable
+
+.play value_interface.go
+
+    ./compile2.go:16: cannot convert t (type T) to type Fooer:
+        T does not implement Fooer (Foo method has pointer receiver)
+
+
+
+* nil in an interface isn't nil!
+
+.play nils.go /START/,/END/
+
+
+* Reference Types
+
+Go has 2 built-in types which fall into the "reference" category
+
+- Slices
+- Maps
+
+These are data structures which have a pointer to the data they contain,
+meaning you can still get reference semantics when passing these by value.
+
+
+* Reference Types
+
+Copies of reference types can still mutate the original data
+
+.play mapref.go /START/,/END/
+
+
+* But, Be Careful With Slices!
+
+.code sliceref.go /START_1/,/END_1/
+
+.play sliceref.go /START_2/,/END_2/
+
+
+* Inside a Slice
+
+A slice is really very simple:
+
+.code slice.h
+
+- Use a pointer when you want to modify the "slice", not just its data
+
+
+* General Guidelines
+
+Use a pointer when:
+ - you have a value you want to pass and modify
+ - you have slice you want to modify `len` or `cap`
+
+Don't use a pointer when:
+ - you have an interface
+ - you have a map
+
+
+* Receivers
+
+- To use a pointer, or not to use a pointer...
+
+Pointer are smaller than most structs, so it should be faster to pass a pointer(?)
+
+.image caches.png
+
+* Is A Pointer Always "Faster"?
+
+- No, but use a pointer anyway.
+- Don't assume performance without...
+
+
+* Benchmarks!
+
+.play bench.go /START/,/END/
