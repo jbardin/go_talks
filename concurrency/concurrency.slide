@@ -1,0 +1,104 @@
+After Go Concurrency Patterns
+Where To Go Next
+28 Apr 2015
+
+James Bardin
+Sr Systems Engineer, Litl
+j.bardin@gmail.com
+@bardinjw
+
+* So, I watched 
+
+.image go_concurrency_patterns.png
+
+* I'm doing concurrency!
+
+.image success.jpg 550 _ 
+
+* Then I watched
+
+.image adv_concurrency_patterns.png
+
+* I can make anything concurrent!
+
+.image super_G.jpg 
+
+* I was told to
+
+Share by communicating
+
+* Often repeated, sometimes taken too far
+
+"Do not communicate by sharing memory; instead, share memory by communicating."
+(Effective Go)
+
+* So where does that lead this superpower-endowed mortal?
+
+* 
+
+.image things.png 550 _
+
+* This leads to the feeling that
+
+    sync.Mutex == BAD
+
+* CODE
+
+.play shared.go /START/,/END/
+
+* CODE
+
+.play shared_2.go /START/,/END/
+
+* CODE
+
+.play shared_3.go /START/,/END/
+
+* It's not a panacea 
+
+- Go doesn't magically make concurrency easy, it just makes it easier to write concurrent programs.
+
+* And debugging starts to look like this
+
+.image tangle.jpg
+
+* Don't forgo synchronization just because it's hard
+
+.image race.jpg
+There are *no* benign data races!
+
+* It's OK, others have felt this way too!
+
+.image stackoverflow.png
+
+* Back to Basics
+
+.play shared_4.go /START/,/END/
+
+* When to use sync vs channels
+
+- If you're protecting access to something, use a Mutex
+- If you're synchronizing concurrent "processes", use channels
+
+* The sync package is super useful
+
+- `sync.Mutex`
+- `sync.WaitGroup`
+
+* 
+
+.play wg.go
+
+* Some more advanced things in "sync"
+
+- `sync.Once`
+- `sync.Cond`
+- `sync.Pool`
+
+
+* Tips for concurrency
+
+- Try to not write concurrent code
+- Think about concurrency as a tree, not a mesh
+- Set well defined "waypoints" where all involved goroutines can meet
+
